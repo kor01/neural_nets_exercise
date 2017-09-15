@@ -7,18 +7,25 @@ def softmax(x):
 
 
 def softmax_grad(sm, y):
-  sm_y = sm[:, y]
-  ret = - sm * sm_y
-  ret[:, y] += sm_y
+  batch_size = sm.shape[0]
+  sm_y = sm[[range(batch_size), y]]
+  sm_y_expand = np.expand_dims(sm_y, axis=-1)
+  ret = - sm * sm_y_expand
+  ret[[range(batch_size), y]] += sm_y
   return ret
 
 
-def sparse_softmax_xent_grad(y, xent, sm):
-  return (-1.0 / xent) * softmax_grad(sm, y)
+def sparse_softmax_xent_grad(sm, y):
+  batch_size = sm.shape[0]
+  sm_y = sm[[range(batch_size), y]]
+  sm_y = np.expand_dims(sm_y, axis=-1)
+  ret = (-1.0 / sm_y) * softmax_grad(sm, y)
+  return ret
 
 
 def sparse_xent(x, y):
-  return -np.log(x[:, y])
+  batch_size = x.shape[0]
+  return -np.log(x[range(batch_size), y])
 
 
 def xw_plus_b(x, w, b):
@@ -32,7 +39,7 @@ def xw_plus_b_grad_w(grad, x):
 
 
 def xw_plus_b_grad_x(grad, w):
-  return np.matmul(w, grad)
+  return np.matmul(grad, w.T)
 
 
 def sigmoid(x):

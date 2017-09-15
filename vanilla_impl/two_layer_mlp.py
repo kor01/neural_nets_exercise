@@ -37,12 +37,12 @@ class MLPNet(object):
       self.hidden_0_act, self.hidden_1_weight, self.hidden_1_bias)
     self.hidden_1_act = manual_grad.sigmoid(self.hidden_1)
     self.output = manual_grad.xw_plus_b(self.hidden_1_act, self.output_weight, 0)
-    self.sm = manual_grad.softmax(self.output)
-    self.xent = manual_grad.sparse_xent(self.sm, self.y)
+    self.softmax = manual_grad.softmax(self.output)
+    self.xent = manual_grad.sparse_xent(self.softmax, self.y)
 
   def backward(self):
-    self.output_grad = manual_grad.sparse_softmax_xent_grad(self.y, self.xent, self.sm)
-    self.output_weight_grad = manual_grad.xw_plus_b_grad_w(self.output_grad, self.x)
+    self.output_grad = manual_grad.sparse_softmax_xent_grad(self.softmax, self.y)
+    self.output_weight_grad = manual_grad.xw_plus_b_grad_w(self.output_grad, self.hidden_1_act)
     self.hidden_1_act_grad = manual_grad.xw_plus_b_grad_x(self.output_grad, self.output_weight)
     self.hidden_1_grad = manual_grad.sigmoid_grad(self.hidden_1_act, self.hidden_1_act_grad)
     self.hidden_weight_1_grad = manual_grad.xw_plus_b_grad_w(self.hidden_1_grad, self.hidden_0_act)
@@ -59,4 +59,3 @@ class MLPNet(object):
     self.hidden_0_weight -= self.learning_rate * self.hidden_weight_0_grad.mean(axis=0)
     self.hidden_0_bias -= self.learning_rate * self.hidden_bias_0_grad.mean(axis=0)
     self.global_step += 1
-
