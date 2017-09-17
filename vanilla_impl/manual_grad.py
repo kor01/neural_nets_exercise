@@ -2,7 +2,7 @@ import numpy as np
 
 
 def softmax(x):
-  exp = np.exp(x)
+  exp = np.exp(x - np.max(x, axis=-1, keepdims=True))
   return exp / exp.sum(axis=-1, keepdims=True)
 
 

@@ -11,17 +11,17 @@ class MLPNet(object):
     self.global_step = 0
     self.learning_rate = learning_rate
     self.hidden_0_weight = np.random.normal(
-      0, 1 / (np.sqrt(feature_dim) * np.sqrt(hidden_size)),
+      0, 1.0 / (np.sqrt(feature_dim) * np.sqrt(hidden_size)),
       size=(feature_dim, hidden_size)).astype('float32')
     self.hidden_0_bias = np.zeros((hidden_size,), dtype=np.float32)
 
     self.hidden_1_weight = np.random.normal(
-      0, 1 / hidden_size,
+      0, 1.0 / hidden_size,
       size=(hidden_size, hidden_size)).astype('float32')
 
     self.hidden_1_bias = np.zeros((hidden_size,), dtype=np.float32)
     self.output_weight = np.random.normal(
-      0, 1 / np.sqrt(hidden_size * num_classes),
+      0, 1.0 / np.sqrt(hidden_size * num_classes),
       size=(hidden_size, num_classes)).astype('float32')
     self.feature_dim = feature_dim
     self.hidden_size = hidden_size
@@ -55,7 +55,7 @@ class MLPNet(object):
   def update(self):
     self.output_weight -= self.learning_rate * self.output_weight_grad.mean(axis=0)
     self.hidden_1_weight -= self.learning_rate * self.hidden_weight_1_grad.mean(axis=0)
-    self.hidden_1_bias -= self.learning_rate * self.hidden_bias_0_grad.mean(axis=0)
+    self.hidden_1_bias -= self.learning_rate * self.hidden_bias_1_grad.mean(axis=0)
     self.hidden_0_weight -= self.learning_rate * self.hidden_weight_0_grad.mean(axis=0)
     self.hidden_0_bias -= self.learning_rate * self.hidden_bias_0_grad.mean(axis=0)
     self.global_step += 1
